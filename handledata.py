@@ -44,46 +44,66 @@ class Handle:
         return result
 
     def show_the_result(input_data):
-        output = []
+        # Tạo biến để lưu trữ tổng giá trị
+        total_value = 0
 
-        # Tạo một từ điển để lưu trữ thông tin sản phẩm theo variant, weight và price
-        product_variants = {}
+        # Tạo từ điển để lưu trữ phân loại sản phẩm và số lượng
+        product_categories = {}
 
-        for item in input_data:
-            key = (item['name'], item['variant'], item['weight'], item['price'])
+        # Tạo từ điển để lưu trữ số lượng của từng variant cụ thể
+        variant_quantities = {variant: 0 for variant in ['Nhân lava trứng muôi', 'Nhân lava socola', 'Nhân tiramisu', 'Nhân trà xanh phomai']}
+
+        # Tạo từ điển để lưu trữ tổng số lượng của các trọng lượng (weight) khác nhau
+        weight_total_quantities = {}
+
+        # Lặp qua từng sản phẩm và phân loại chúng
+        for product in input_data:
+            weight = product['weight']
+            name = product['name']
+            variant = product['variant']
+            qty = product['qty']
+            price = float(product['price'])
             
-            if key in product_variants:
-                product_variants[key]['qty'] += item['qty']
-            else:
-                product_variants[key] = {
-                    'name': item['name'],
-                    'variant': item['variant'],
-                    'weight': item['weight'],
-                    'price': item['price'],
-                    'qty': item['qty']
-                }
-
-        # Chuyển từ từ điển sang list
-        for key, data in product_variants.items():
-            variant_info = {
-                'name': f"{data['variant']} - {data['weight']} ({data['price']})",
-                'qty': data['qty']
-            }
+            # Cập nhật tổng giá trị
+            total_value += qty * price
             
-            existing_product = next((p for p in output if p['name'] == data['name']), None)
+            # Cập nhật số lượng của từng variant cụ thể
+            if variant in variant_quantities:
+                variant_quantities[variant] += qty
             
-            if existing_product:
-                existing_product['variant'].append(variant_info)
-            else:
-                output.append({
-                    'name': data['name'],
-                    'variant': [variant_info]
-                })
+            # Cập nhật tổng số lượng của các trọng lượng khác nhau
+            if weight not in weight_total_quantities:
+                weight_total_quantities[weight] = 0
+            weight_total_quantities[weight] += qty
+            
+            # Tạo cấu trúc dữ liệu nếu chưa tồn tại
+            if weight not in product_categories:
+                product_categories[weight] = {}
+            if name not in product_categories[weight]:
+                product_categories[weight][name] = {}
+            if variant not in product_categories[weight][name]:
+                product_categories[weight][name][variant] = 0
+            
+            # Tăng số lượng sản phẩm
+            product_categories[weight][name][variant] += qty
 
-        return output
+        # In kết quả theo yêu cầu
+        for weight, weight_data in product_categories.items():
+            print(weight + ":")
+            for name, name_data in weight_data.items():
+                print("--" + name + ":")
+                for variant, qty in name_data.items():
+                    print("----", variant + ":", qty)
 
-    def str_result(result):
-        for product in result:
-            print(f"{product['name']} có:")
-            for variant in product['variant']:
-                print(f"{variant['qty']} cái - {variant['name']}")
+        # In số lượng của từng variant cụ thể
+        print("Số lượng của từng variant cụ thể:")
+        for variant, qty in variant_quantities.items():
+            print(f"-- {variant}: {qty}")
+
+        # In tổng số lượng của các trọng lượng khác nhau
+        print("Tổng số lượng của các trọng lượng khác nhau:")
+        for weight, qty in weight_total_quantities.items():
+            print(f"-- {weight}: {qty}")
+
+        # In tổng giá trị của tất cả sản phẩm
+        print("Tổng giá trị của tất cả sản phẩm:", total_value)

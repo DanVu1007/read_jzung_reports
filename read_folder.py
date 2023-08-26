@@ -19,5 +19,5 @@ for image_file in image_files:
     imageData = Handle.get_data_of_image(extracted_text)
     result_array.extend(imageData)
 
-resultArray = Handle.show_the_result(result_array)
-print (Handle.str_result(resultArray))
+print(result_array)
+Handle.show_the_result(result_array)
