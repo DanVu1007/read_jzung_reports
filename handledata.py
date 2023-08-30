@@ -16,7 +16,7 @@ class Handle:
 
     def get_data_of_image(extracted_text):
         start_index = extracted_text.find("Đơn giá SL T.tiền")
-        end_index = extracted_text.find("Tạm tính ")
+        end_index = extracted_text.find("Tổng cộng ")
         if start_index != -1:
             relevant_text = extracted_text[start_index:end_index]
 
